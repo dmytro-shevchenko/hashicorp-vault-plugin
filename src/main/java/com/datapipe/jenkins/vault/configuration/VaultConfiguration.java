@@ -23,22 +23,27 @@ import hudson.util.ListBoxModel;
 
 public class VaultConfiguration extends AbstractDescribableImpl<VaultConfiguration> implements Serializable {
     private String vaultUrl;
-
     private String vaultCredentialId;
+    private Boolean vaultRenew;
+    private Integer vaultRenewHours;
 
     public VaultConfiguration() {
         // no args constructor
     }
 
     @DataBoundConstructor
-    public VaultConfiguration(String vaultUrl, String vaultCredentialId) {
+    public VaultConfiguration(String vaultUrl, String vaultCredentialId, Boolean vaultRenew, Integer vaultRenewHours) {
         this.vaultUrl = normalizeUrl(vaultUrl);
         this.vaultCredentialId = vaultCredentialId;
+        this.vaultRenew = vaultRenew;
+        this.vaultRenewHours = vaultRenewHours;
     }
 
     public VaultConfiguration(VaultConfiguration toCopy) {
         this.vaultUrl = toCopy.getVaultUrl();
         this.vaultCredentialId = toCopy.getVaultCredentialId();
+        this.vaultRenew = toCopy.getVaultRenew();
+        this.vaultRenewHours = toCopy.getVaultRenewHours();
     }
 
     public VaultConfiguration mergeWithParent(VaultConfiguration parent) {
@@ -52,6 +57,7 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         if (StringUtils.isBlank(result.getVaultUrl())) {
             result.setVaultUrl(parent.getVaultUrl());
         }
+        //TODO: add renew merge here
         return result;
     }
 
@@ -63,6 +69,14 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         return vaultCredentialId;
     }
 
+    public Boolean getVaultRenew() {
+        return vaultRenew;
+    }
+
+    public Integer getVaultRenewHours() {
+        return vaultRenewHours;
+    }
+
     @DataBoundSetter
     public void setVaultUrl(String vaultUrl) {
         this.vaultUrl = normalizeUrl(vaultUrl);
@@ -71,6 +85,16 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
     @DataBoundSetter
     public void setVaultCredentialId(String vaultCredentialId) {
         this.vaultCredentialId = vaultCredentialId;
+    }
+
+    @DataBoundSetter
+    public void setVaultRenew(Boolean vaultRenew) {
+        this.vaultRenew = vaultRenew;
+    }
+
+    @DataBoundSetter
+    public void setVaultRenewHours(Integer vaultRenewHours) {
+        this.vaultRenewHours = vaultRenewHours;
     }
 
     @Extension

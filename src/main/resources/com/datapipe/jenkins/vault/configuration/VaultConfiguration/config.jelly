@@ -7,4 +7,10 @@
     <f:entry title="Vault Credential" field="vaultCredentialId" name="vaultCredentialId">
         <c:select/>
     </f:entry>
+    <f:entry title="Vault renew token on request">
+        <f:checkbox name="vaultRenew" checked="true"/>
+    </f:entry>
+    <f:entry title="Vault renew token hours">
+        <f:textbox field="vaultRenewHours" name="vaultRenewHours" default="720"/>
+    </f:entry>
 </j:jelly>
