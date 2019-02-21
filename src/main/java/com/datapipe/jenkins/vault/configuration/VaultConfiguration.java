@@ -35,8 +35,9 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
     public VaultConfiguration(String vaultUrl, String vaultCredentialId, Boolean vaultRenew, Integer vaultRenewHours) {
         this.vaultUrl = normalizeUrl(vaultUrl);
         this.vaultCredentialId = vaultCredentialId;
-        this.vaultRenew = vaultRenew;
-        this.vaultRenewHours = vaultRenewHours;
+        // set default values if null
+        this.vaultRenew = vaultRenew == null? true : vaultRenew;
+        this.vaultRenewHours = vaultRenewHours == null? 720 : vaultRenewHours;
     }
 
     public VaultConfiguration(VaultConfiguration toCopy) {
@@ -57,7 +58,12 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         if (StringUtils.isBlank(result.getVaultUrl())) {
             result.setVaultUrl(parent.getVaultUrl());
         }
-        //TODO: add renew merge here
+        if (result.getVaultRenew() == null) {
+            result.setVaultRenew(parent.getVaultRenew());
+        }
+        if (result.getVaultRenewHours() == null) {
+            result.setVaultRenewHours(parent.getVaultRenewHours());
+        }
         return result;
     }
 
