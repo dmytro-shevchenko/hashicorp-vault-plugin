@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
@@ -74,6 +73,7 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
     private List<VaultSecret> vaultSecrets;
     private List<String> valuesToMask = new ArrayList<>();
     private VaultAccessor vaultAccessor = new VaultAccessor();
+    private PrintStream logger;
 
     @DataBoundConstructor
     public VaultBuildWrapper(@CheckForNull List<VaultSecret> vaultSecrets) {
@@ -84,7 +84,7 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
     public void setUp(Context context, Run<?, ?> build, FilePath workspace,
                       Launcher launcher, TaskListener listener, EnvVars initialEnvironment)
             throws IOException, InterruptedException {
-        PrintStream logger = listener.getLogger();
+        this.logger = listener.getLogger();
         pullAndMergeConfiguration(build);
 
         // JENKINS-44163 - Build fails with a NullPointerException when no secrets are given for a job
@@ -93,7 +93,7 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
                 List<LogicalResponse> responses = provideEnvironmentVariablesFromVault(context, build);
                 context.setDisposer(new VaultDisposer(getConfiguration(), retrieveVaultCredentials(build), retrieveLeaseIds(responses)));
             } catch (VaultException e) {
-                e.printStackTrace(logger);
+                e.printStackTrace(this.logger);
                 throw new AbortException(e.getMessage());
             }
         }
@@ -146,7 +146,7 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
             vaultAccessor.auth(credential);
             LogicalResponse response = vaultAccessor.read(vaultSecret.getPath());
             if (Boolean.TRUE.equals(renew)) {
-                vaultAccessor.tokenRenew(renewHours);
+                vaultAccessor.tokenRenew(renewHours, this.logger);
             }
             responses.add(response);
             Map<String, String> values = response.getData();
