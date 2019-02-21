@@ -34,7 +34,6 @@ public class VaultAccessor implements Serializable {
     }
 
     public LogicalResponse read(String path) {
-        LogicalResponse response;
         try {
             return vault.logical().read(path);
 

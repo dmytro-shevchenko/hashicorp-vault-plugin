@@ -33,7 +33,6 @@ import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-import com.bettercloud.vault.response.AuthResponse;
 import hudson.tasks.BuildWrapperDescriptor;
 import com.bettercloud.vault.response.LogicalResponse;
 import org.apache.commons.lang.StringUtils;
@@ -92,8 +91,8 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
             try {
                 List<LogicalResponse> responses = provideEnvironmentVariablesFromVault(context, build);
                 context.setDisposer(new VaultDisposer(getConfiguration(), retrieveVaultCredentials(build), retrieveLeaseIds(responses)));
-            } catch (VaultException e) {
-                e.printStackTrace(this.logger);
+            } catch (VaultException|VaultPluginException e) {
+                //e.printStackTrace(this.logger);
                 throw new AbortException(e.getMessage());
             }
         }
@@ -133,13 +132,10 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
         String url = getConfiguration().getVaultUrl();
         Boolean renew = getConfiguration().getVaultRenew();
         Integer renewHours = getConfiguration().getVaultRenewHours();
-
         if (StringUtils.isBlank(url)) {
             throw new VaultPluginException("The vault url was not configured - please specify the vault url to use.");
         }
-
         VaultCredential credential = retrieveVaultCredentials(build);
-
         vaultAccessor.init(url);
         ArrayList<LogicalResponse> responses = new ArrayList<>();
         for (VaultSecret vaultSecret : vaultSecrets) {
