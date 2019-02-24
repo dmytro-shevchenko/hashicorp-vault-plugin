@@ -32,23 +32,18 @@ public class VaultBuildWrapperWithMockAccessor extends VaultBuildWrapper {
         super(vaultSecrets);
         setVaultAccessor(new VaultAccessor() {
             @Override
-            public void init(String url) {
+            public void init(String url, VaultCredential credential) {
                 if (!url.equals("http://jenkinsfile-vault-url.com")) {
                     throw new AssertionError("URL " + url + " does not match expected value of " + "http://jenkinsfile-vault-url.com");
                 }
-            }
-
-            @Override
-            public void auth(VaultCredential vaultCredential) {
-                VaultAppRoleCredential appRoleCredential = (VaultAppRoleCredential) vaultCredential;
+                VaultAppRoleCredential appRoleCredential = (VaultAppRoleCredential) credential;
                 if (!appRoleCredential.getRoleId().equals("role-id-global-2") || !appRoleCredential.getSecretId().getPlainText().equals("secret-id-global-2")) {
                     throw new AssertionError("role-id " + appRoleCredential.getRoleId() + " or secret-id " + appRoleCredential.getSecretId() + " do not match expected: -global-2");
                 }
-
             }
 
             @Override
-            public LogicalResponse read(String path) {
+            public LogicalResponse read(String path, Integer engineVersion) {
                 if (!path.equals("secret/path1")) {
                     throw new AssertionError("path " + path + " does not match expected: secret/path1");
                 }
