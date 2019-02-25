@@ -122,6 +122,8 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
 
     private List<LogicalResponse> provideEnvironmentVariablesFromVault(Context context, Run build) {
         String url = getConfiguration().getVaultUrl();
+        Boolean renew = getConfiguration().getVaultRenew();
+        Integer renewHours = getConfiguration().getVaultRenewHours();
 
         if (StringUtils.isBlank(url)) {
             throw new VaultPluginException("The vault url was not configured - please specify the vault url to use.");
@@ -134,6 +136,9 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
         for (VaultSecret vaultSecret : vaultSecrets) {
             try {
                 LogicalResponse response = vaultAccessor.read(vaultSecret.getPath(), vaultSecret.getEngineVersion());
+                if (Boolean.TRUE.equals(renew)) {
+                    vaultAccessor.renew(renewHours, logger);
+                }
                 responses.add(response);
                 Map<String, String> values = response.getData();
                 for (VaultSecretValue value : vaultSecret.getSecretValues()) {

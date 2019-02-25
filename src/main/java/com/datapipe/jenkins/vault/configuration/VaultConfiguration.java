@@ -30,21 +30,29 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
 
     private boolean skipSslVerification = false;
 
+    private Boolean vaultRenew;
+
+    private Integer vaultRenewHours;
+
     public VaultConfiguration() {
         // no args constructor
     }
 
     @DataBoundConstructor
-    public VaultConfiguration(String vaultUrl, String vaultCredentialId, boolean failIfNotFound) {
+    public VaultConfiguration(String vaultUrl, String vaultCredentialId, boolean failIfNotFound, Boolean vaultRenew, Integer vaultRenewHours) {
         this.vaultUrl = normalizeUrl(vaultUrl);
         this.vaultCredentialId = vaultCredentialId;
         this.failIfNotFound = failIfNotFound;
+        this.vaultRenew = vaultRenew;
+        this.vaultRenewHours = vaultRenewHours;
     }
 
     public VaultConfiguration(VaultConfiguration toCopy) {
         this.vaultUrl = toCopy.getVaultUrl();
         this.vaultCredentialId = toCopy.getVaultCredentialId();
         this.failIfNotFound = toCopy.failIfNotFound;
+        this.vaultRenew = toCopy.getVaultRenew();
+        this.vaultRenewHours = toCopy.getVaultRenewHours();
     }
 
     public VaultConfiguration mergeWithParent(VaultConfiguration parent) {
@@ -58,6 +66,12 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         if (StringUtils.isBlank(result.getVaultUrl())) {
             result.setVaultUrl(parent.getVaultUrl());
         }
+        if (result.getVaultRenew() == null) {
+            result.setVaultRenew(parent.getVaultRenew());
+        }
+        if (result.getVaultRenewHours() == null) {
+            result.setVaultRenewHours(parent.getVaultRenewHours());
+        }
         result.failIfNotFound = failIfNotFound;
         return result;
     }
@@ -68,6 +82,14 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
 
     public String getVaultCredentialId() {
         return vaultCredentialId;
+    }
+
+    public Boolean getVaultRenew() {
+        return vaultRenew;
+    }
+
+    public Integer getVaultRenewHours() {
+        return vaultRenewHours;
     }
 
     @DataBoundSetter
@@ -95,6 +117,16 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
 
     public void setSkipSslVerification(boolean skipSslVerification) {
         this.skipSslVerification = skipSslVerification;
+    }
+
+    @DataBoundSetter
+    public void setVaultRenew(Boolean vaultRenew) {
+        this.vaultRenew = vaultRenew;
+    }
+
+    @DataBoundSetter
+    public void setVaultRenewHours(Integer vaultRenewHours) {
+        this.vaultRenewHours = vaultRenewHours;
     }
 
     @Extension
