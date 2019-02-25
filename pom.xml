@@ -75,6 +75,7 @@
           <extensions>true</extensions>
           <configuration>
             <compatibleSinceVersion>2.0.0</compatibleSinceVersion>
+            <hpiName>${project.build.finalName}-${project.version}</hpiName>
           </configuration>
         </plugin>
       </plugins>
