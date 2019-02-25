@@ -44,6 +44,7 @@ import org.apache.commons.lang.StringUtils;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -53,6 +54,7 @@ import java.util.Map;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.ExtensionList;
@@ -80,13 +82,20 @@ public class VaultBuildWrapper extends SimpleBuildWrapper {
 
     @Override
     public void setUp(Context context, Run<?, ?> build, FilePath workspace,
-                      Launcher launcher, TaskListener listener, EnvVars initialEnvironment) {
+                      Launcher launcher, TaskListener listener, EnvVars initialEnvironment) throws IOException {
         logger = listener.getLogger();
         pullAndMergeConfiguration(build);
 
         // JENKINS-44163 - Build fails with a NullPointerException when no secrets are given for a job
         if (null != vaultSecrets && !vaultSecrets.isEmpty()) {
-            provideEnvironmentVariablesFromVault(context, build);
+            try {
+                provideEnvironmentVariablesFromVault(context, build);
+            } catch (Exception e) {
+                if (configuration.getPrintStacktrace() != null && configuration.getPrintStacktrace()) {
+                    e.printStackTrace(logger);
+                }
+                throw new AbortException(e.getMessage());
+            }
         }
     }
 

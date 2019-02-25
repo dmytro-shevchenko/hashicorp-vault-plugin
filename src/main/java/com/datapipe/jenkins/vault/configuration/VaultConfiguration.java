@@ -34,17 +34,20 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
 
     private Integer vaultRenewHours;
 
+    private Boolean printStacktrace;
+
     public VaultConfiguration() {
         // no args constructor
     }
 
     @DataBoundConstructor
-    public VaultConfiguration(String vaultUrl, String vaultCredentialId, boolean failIfNotFound, Boolean vaultRenew, Integer vaultRenewHours) {
+    public VaultConfiguration(String vaultUrl, String vaultCredentialId, boolean failIfNotFound, Boolean vaultRenew, Integer vaultRenewHours, Boolean printStacktrace) {
         this.vaultUrl = normalizeUrl(vaultUrl);
         this.vaultCredentialId = vaultCredentialId;
         this.failIfNotFound = failIfNotFound;
         this.vaultRenew = vaultRenew;
         this.vaultRenewHours = vaultRenewHours;
+        this.printStacktrace = printStacktrace;
     }
 
     public VaultConfiguration(VaultConfiguration toCopy) {
@@ -53,6 +56,7 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         this.failIfNotFound = toCopy.failIfNotFound;
         this.vaultRenew = toCopy.getVaultRenew();
         this.vaultRenewHours = toCopy.getVaultRenewHours();
+        this.printStacktrace = toCopy.getPrintStacktrace();
     }
 
     public VaultConfiguration mergeWithParent(VaultConfiguration parent) {
@@ -71,6 +75,9 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         }
         if (result.getVaultRenewHours() == null) {
             result.setVaultRenewHours(parent.getVaultRenewHours());
+        }
+        if (result.getPrintStacktrace() == null) {
+            result.setPrintStacktrace(parent.getPrintStacktrace());
         }
         result.failIfNotFound = failIfNotFound;
         return result;
@@ -92,6 +99,10 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         return vaultRenewHours;
     }
 
+    public Boolean getPrintStacktrace() {
+        return printStacktrace;
+    }
+
     @DataBoundSetter
     public void setVaultUrl(String vaultUrl) {
         this.vaultUrl = normalizeUrl(vaultUrl);
@@ -100,6 +111,21 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
     @DataBoundSetter
     public void setVaultCredentialId(String vaultCredentialId) {
         this.vaultCredentialId = vaultCredentialId;
+    }
+
+    @DataBoundSetter
+    public void setVaultRenew(Boolean vaultRenew) {
+        this.vaultRenew = vaultRenew;
+    }
+
+    @DataBoundSetter
+    public void setVaultRenewHours(Integer vaultRenewHours) {
+        this.vaultRenewHours = vaultRenewHours;
+    }
+
+    @DataBoundSetter
+    public void setPrintStacktrace(Boolean printStacktrace) {
+        this.printStacktrace = printStacktrace;
     }
 
     public boolean isFailIfNotFound() {
@@ -119,15 +145,7 @@ public class VaultConfiguration extends AbstractDescribableImpl<VaultConfigurati
         this.skipSslVerification = skipSslVerification;
     }
 
-    @DataBoundSetter
-    public void setVaultRenew(Boolean vaultRenew) {
-        this.vaultRenew = vaultRenew;
-    }
 
-    @DataBoundSetter
-    public void setVaultRenewHours(Integer vaultRenewHours) {
-        this.vaultRenewHours = vaultRenewHours;
-    }
 
     @Extension
     public static class DescriptorImpl extends Descriptor<VaultConfiguration> {

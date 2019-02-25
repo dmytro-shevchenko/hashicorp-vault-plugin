@@ -8,12 +8,15 @@
         <c:select/>
     </f:entry>
     <f:entry title="Fail if path is not found" field="failIfNotFound" name="failIfNotFound">
-        <f:checkbox/>
+        <f:checkbox default="true"/>
     </f:entry>
-    <f:entry title="Vault renew token on request">
-        <f:checkbox name="vaultRenew" checked="true"/>
+    <f:entry title="Vault renew token on request" field="vaultRenew" name="vaultRenew">
+        <f:checkbox default="true"/>
     </f:entry>
     <f:entry title="Vault renew token hours">
         <f:textbox field="vaultRenewHours" name="vaultRenewHours" default="720"/>
+    </f:entry>
+    <f:entry title="Print stacktrace on exception" field="printStacktrace" name="printStacktrace">
+        <f:checkbox/>
     </f:entry>
 </j:jelly>
